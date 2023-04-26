@@ -1,0 +1,32 @@
+{% load static %}
+
+{% url 'home' as path_to_home %}
+{% url 'app:dashboard' as path_to_dasboard %}
+{% url 'app:botones' as path_to_botones %}
+
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: rgba(6, 43, 17, 0.9);">
+  <div class="container-fluid">
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">  
+        {% if request.user.is_authenticated %}    
+            {% if request.user.is_staff %}  
+            <a class="nav-link" id="logout" href="{% url 'logout' %}" style="color:darkseagreen;" >Cerrar Sesión</a>                  
+                {% comment %} 
+                <li class="nav-item">
+                <a class="nav-link {% if request.path == path_to_home %}active{% endif %}" href="{{path_to_dasboard}}">Dashboard</a>
+                </li>   
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == path_to_map %}active{% endif %}" href="{{path_to_botones}}">Inicio</a>
+                </li>    
+                  {% endcomment %}
+            {% endif %}   
+        
+        {% else %}
+        <a class="nav-link" href="{% url 'login' %}" style="color:darkseagreen;" >Iniciar Sesión</a>                  
+        {% endif %}   
+      </ul>
+    </div>
+      
+  </div>
+</nav>

@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block scripts %}
+    <script src="{% static 'counter.js' %}" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+    <script>
+    function getRandomColor(a) {
+        var r = Math.floor(Math.random() * 255);
+        var g = Math.floor(Math.random() * 255);
+        var b = Math.floor(Math.random() * 255);
+        return "rgba(" + r + "," + g + "," + b + ", " + a + ")";
+    }
+       $(document).ready(function(){
+        const ctx = document.getElementById('bars').getContext('2d');    
+        const ctx2 = document.getElementById('barsH').getContext('2d');    
+
+        const bars = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Boton 1','Boton 2'],
+                datasets: [{
+                    label: 'Producción (T)',
+                    data: {{sumabotones}},
+                    borderColor: 'rgba(100, 99, 132, 0.5)',
+                    borderWidth: 1.5,                    
+                    hoverRadius:10,
+                    lineTension: 0,        
+                    backgroundColor: [getRandomColor(0.3),getRandomColor(.3)]                
+                    
+                    
+                }]
+            },
+            options:{
+                title: {
+                display: true,
+                text: 'Numero de clicks por botón'
+                }
+            }
+           
+        });  
+        const barsH = new Chart(ctx2, {
+            type: 'horizontalBar',
+            data: {
+                labels: [{% for item in usersLogins.index %}'{{item}}',{% endfor %}],
+                datasets: [{
+                    label: 'Producción (T)',
+                    data: [{% for item in usersLogins.values %}'{{item}}',{% endfor %}],
+                    backgroundColor: [{% for item in usersLogins %} getRandomColor(0.9) ,{% endfor %}],
+                }]
+            },
+            options: {      
+                indexAxis: 'y',
+                elements:{
+                    bar:{
+                        borderWidth:2,
+                    }
+                },     
+                legend:{
+                    display:false,
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
+                },
+                title: {
+                    display: true,
+                    text: ['Inicio de sesión por usuario'],                    
+                },             
+                
+            }
+        });  
+
+
+       })
+    
+    </script>
+{% endblock scripts %}
+{% block title %}Inicio{% endblock title %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'municipios/style.css' %}">
+{% endblock styles %}
+{% block content %}
+    {% if request.user.is_staff %}  
+        {% comment %} ADMIN {% endcomment %}
+        <h1 class="headers" style="text-align:center;" >Hello admin {{user.username}} </h1>
+        
+        <div id="graphs">
+            <div class="graphs">                                    
+                <div class="box"><canvas id="bars"></canvas></div>              
+                <div class="box"><canvas id="barsH"></canvas></div>              
+            </div>
+        </div>
+
+        
+         <table class="text-center table table-hover table-striped table-bordered mt-3">
+                <thead>
+                <tr >
+                    <th scope="col">Usuario</th>
+                    <th scope="col">Inicio Sesión</th>
+                    <th scope="col">Tiempo</th>
+                    <th scope="col">Boton 1</th>
+                    <th scope="col">Boton 2</th>
+                </tr>
+                </thead>
+                <tbody> 
+                    {% for o in objs %}                
+                        <tr>
+                            <th scope="row">{{o.user}}</th>
+                            <td class="table-warning">{{o.inicio}}</td>
+                            <td class="table-success">{{o.tiempo|safe}}</td>
+                            <td class="table-primary">{{o.boton1}}</td>
+                            <td class="table-info">{{o.boton2}}</td>
+                        </tr>   
+                    {% endfor %}            
+                </tbody>
+            </table>
+
+    {% else %}
+        {% comment %} USUARIO {% endcomment %}
+        <h1 class="headers" style="text-align:center;" >Hello user {{user.username}} </h1>
+        <div style="text-align:center;">
+            <button id="btn1" type="button" class="btn btn-primary">Boton 1</button>
+            <button id="btn2" type="button" class="btn btn-success">Boton 2</button>
+            <a to_java="{% url 'create_register' %}" id="add" class="nav-link" href="{% url 'logout' %}">Cerrar Sesión</a>
+        </div>
+    {% endif %}
+
+
+
+{% endblock content %}

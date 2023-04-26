@@ -1,0 +1,19 @@
+.graphs{
+    position: relative;
+    width: 100%;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 400px;
+    grid-gap: 30px
+}
+
+.graphs .box{
+    align-self: center;
+    position: relative;
+    background-color: rgb(255, 255, 255);
+    padding: 20px;
+    width: 100%;    
+    box-shadow: 0 7px 10px rgba(9, 131, 230, 0.219);
+    border-radius: 20px;
+}
